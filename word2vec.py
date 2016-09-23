@@ -55,7 +55,7 @@ flags.DEFINE_string(
 		"E.g. https://word2vec.googlecode.com/svn/trunk/questions-words.txt.")
 flags.DEFINE_integer("embedding_size", 200, "The embedding dimension size.")
 flags.DEFINE_integer(
-		"epochs_to_train", 15,
+		"epochs_to_train", 10,
 		"Number of epochs to train. Each epoch processes the training data once "
 		"completely.")
 flags.DEFINE_float("learning_rate", 0.2, "Initial learning rate.")
