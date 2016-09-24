@@ -44,11 +44,11 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 flags = tf.app.flags
-flags.DEFINE_string("restore_path", 'model/econ/model.ckpt-852087', "Directory to load the model and "
+flags.DEFINE_string("restore_path", 'model/%s'%sys.argv[1], "Directory to load the model and "
 										"training summaries.")
 flags.DEFINE_string("save_path", 'model/word2vec', "Directory to write the model and "
 										"training summaries.")
-flags.DEFINE_string("train_data", 'article_seg_經濟.txt', "Training text file. "
+flags.DEFINE_string("train_data", 'article_seg_%s.txt'%sys.argv[2], "Training text file. "
 										"E.g., unzipped file http://mattmahoney.net/dc/text8.zip.")
 flags.DEFINE_string(
 		"eval_data", None, "File consisting of analogies of four tokens."
@@ -429,7 +429,7 @@ class Word2Vec(object):
 		for i in xrange(len(words)):
 			print("\n%s\n=====================================" % (words[i]))
 			for (neighbor, distance) in zip(idx[i, :num], vals[i, :num]):
-				print("%-20s %6.4f" % (self._id2word[neighbor], distance))
+				print("%s,%6.4f" % (self._id2word[neighbor], distance))
 def _start_shell(local_ns=None):
 	# An interactive shell is useful for debugging/development.
 	import IPython
