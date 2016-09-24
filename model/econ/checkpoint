@@ -1,0 +1,6 @@
+model_checkpoint_path: "model.ckpt-852087"
+all_model_checkpoint_paths: "../econmodel-632933"
+all_model_checkpoint_paths: "../econmodel-689890"
+all_model_checkpoint_paths: "../econmodel-746693"
+all_model_checkpoint_paths: "../econmodel-803470"
+all_model_checkpoint_paths: "model.ckpt-852087"

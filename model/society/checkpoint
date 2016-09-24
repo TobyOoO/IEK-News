@@ -1,0 +1,6 @@
+model_checkpoint_path: "model.ckpt-309707"
+all_model_checkpoint_paths: "../societymodel-193991"
+all_model_checkpoint_paths: "../societymodel-225094"
+all_model_checkpoint_paths: "../societymodel-256001"
+all_model_checkpoint_paths: "../societymodel-287116"
+all_model_checkpoint_paths: "model.ckpt-309707"

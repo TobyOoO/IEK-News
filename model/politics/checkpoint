@@ -1,0 +1,6 @@
+model_checkpoint_path: "model.ckpt-917884"
+all_model_checkpoint_paths: "../politicsmodel-558522"
+all_model_checkpoint_paths: "../politicsmodel-650161"
+all_model_checkpoint_paths: "../politicsmodel-742347"
+all_model_checkpoint_paths: "../politicsmodel-833978"
+all_model_checkpoint_paths: "model.ckpt-917884"
