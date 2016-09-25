@@ -44,9 +44,9 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 flags = tf.app.flags
-flags.DEFINE_string("save_path", 'model/env', "Directory to write the model and "
+flags.DEFINE_string("save_path", 'model/others', "Directory to write the model and "
 										"training summaries.")
-flags.DEFINE_string("train_data", 'article_seg_環境.txt', "Training text file. "
+flags.DEFINE_string("train_data", 'article_seg_其它.txt', "Training text file. "
 										"E.g., unzipped file http://mattmahoney.net/dc/text8.zip.")
 flags.DEFINE_string(
 		"eval_data", None, "File consisting of analogies of four tokens."
