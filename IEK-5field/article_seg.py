@@ -40,8 +40,8 @@ def read_data():
 	conn = sqlite3.connect('database.db')
 	c = conn.cursor()
 
-	prev = '數位經濟'
-	for i, article in enumerate(c.execute('SELECT Title, Field FROM News WHERE Title not null')):
+	prev = '經濟'
+	for i, article in enumerate(c.execute('SELECT Title, Field FROM News WHERE Title not null and Field="其他"')):
 		print('reading %i' % i)
 		result += ['UNK']
 		text = article[0].replace('  ', '')
@@ -62,5 +62,7 @@ def read_data():
 				f.write(' '.join(result))
 			result = []
 			prev = article[1]
+	with open('article_seg_%s.txt'%prev, 'wb') as f:
+		f.write(' '.join(result))
 
 read_data()

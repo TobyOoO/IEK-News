@@ -1,0 +1,6 @@
+model_checkpoint_path: "model.ckpt-32667"
+all_model_checkpoint_paths: "../othersmodel-22776"
+all_model_checkpoint_paths: "../othersmodel-25947"
+all_model_checkpoint_paths: "../othersmodel-29307"
+all_model_checkpoint_paths: "../othersmodel-32667"
+all_model_checkpoint_paths: "model.ckpt-32667"
