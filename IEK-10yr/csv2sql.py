@@ -9,4 +9,7 @@ with open('data/20160929-news.csv', 'r') as f:
 	next(reader, None)
 	for i, row in enumerate(reader):
 		c.execute('INSERT INTO News VALUES (?,?,?,?,?,?,?,?,?,?,?)', [None]+row)
-		if(i%1000==0):print('inserting %i\r'%i)
+		if(i%1000==0):
+			print('inserting %i\r'%i)
+			conn.commit()
+conn.close()
