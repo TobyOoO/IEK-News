@@ -77,7 +77,7 @@ flags.DEFINE_float("subsample", 1e-3,
 									 "with higher frequency will be randomly down-sampled. Set "
 									 "to 0 to disable.")
 flags.DEFINE_boolean(
-		"interactive", True,
+		"interactive", False,
 		"If true, enters an IPython interactive session to play with the trained "
 		"model. E.g., try model.analogy('france', 'paris', 'russia') and "
 		"model.nearby(['proton', 'elephant', 'maxwell']")
