@@ -393,15 +393,32 @@ class Word2Vec(object):
 			for (neighbor, distance) in zip(idx[i, :num], vals[i, :num]):
 				result.append([self._id2word[neighbor], distance])
 				#print("%-20s %6.4f" % (self._id2word[neighbor], distance))
+		#print(result[0])
+		if(result[0][0] == 'UNK'):
+			#print(words[0]+' UNK')
+			return []
 		return result
 	def export(self, topic):
 		import sqlite3
 		import csv
 		conn = sqlite3.connect('data/database.db')
 		c = conn.cursor()
-		c.execute('SELECT Field, Topic, Keyword From News Where Topic = ? Group By Keyword', (topic.split('_')[0],))
+		c.execute('SELECT Field, Topic, Keyword From News Where Topic = ? Group By Keyword', (''.join(topic.split('_')[0:2]),))
 		data = c.fetchall()
 		result = [['Field', 'Topic', 'Keyword', 'Related Word', 'Weight']]
+		keyword_list = []
+		for row in data:
+			keyword = row[2]
+			if len(keyword) >= 4:
+				seg = [keyword[:2], keyword[2:]]
+				for s in seg:
+					if s in keyword_list:
+						continue
+					else:
+						keyword_list.append(s)
+						data.append([row[0], row[1], s])
+			else:
+				keyword_list.append(keyword)
 		for row in data:
 			print('Keyword %s'%row[2])
 			keyword = [str(row[2])]
@@ -429,7 +446,8 @@ def main(_):
 		sys.exit(1)'''
 	topic_list_0 = ['糧食安全','網路犯罪','能源與資源枯竭','製造業的革命','重視生活品質的生活型態','食品安全']
 	topic_list = ['不均等問題','全球化挑戰的新管理形式','國家間環境影響增加','地方永續發展','多元文化擴散','失業或就業不穩定','少子化與超高齡化社會','少子化與高齡化社會','數位經濟','智慧世界的學習與工作','氣候變遷與自然災害','災難危險','生物多樣性危機','糧食安全','網路犯罪','能源與資源枯竭','製造業的革命','重視生活品質的生活型態','食品安全']
-	topic_list = [ x+'_0' for x in topic_list_0] + [x+'_1' for x in topic_list]
+	topic_list = ['中國大陸與國安_統一問題']
+	topic_list = [ x+'_0' for x in topic_list] + [x+'_1' for x in topic_list]
 	for topic in topic_list:
 		topic = unicode(topic)
 		FLAGS.save_path='model/%s/'%topic

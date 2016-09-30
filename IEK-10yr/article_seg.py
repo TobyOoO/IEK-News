@@ -49,7 +49,7 @@ def read_data():
 						continue
 					word_list.append(seg)
 				result += word_list
-			with open('seg/article_seg_%s_%i.txt'%(t,half), 'wb') as f:
+			with open('seg/article_seg_%s_%i.txt'%(t.replace('/','_'),half), 'wb') as f:
 				f.write(' '.join(result))
 
 read_data()
