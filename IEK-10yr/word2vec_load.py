@@ -431,7 +431,7 @@ class Word2Vec(object):
 			for neighbor in matrix:
 				result.append([row[0], row[1], row[2], neighbor[0], neighbor[1]])
 
-		with open(u'export/wordlist_%s.csv'%topic, 'w') as f:
+		with open(u'export/wordlist_%s.csv'%topic.replace('/','_'), 'w') as f:
 			writer = csv.writer(f)
 			writer.writerows(result)
 		conn.close()
@@ -445,9 +445,10 @@ def _start_shell(local_ns=None):
 	IPython.start_ipython(argv=[], user_ns=user_ns)
 def main(_):
 	topic_list = ['不均等問題','全球化挑戰的新管理形式','國家間環境影響增加','地方永續發展','多元文化擴散','失業或就業不穩定','少子化與超高齡化社會','少子化與高齡化社會','數位經濟','智慧世界的學習與工作','氣候變遷與自然災害','災難危險','生物多樣性危機','糧食安全','網路犯罪','能源與資源枯竭','製造業的革命','重視生活品質的生活型態','食品安全']
+	topic_list = ['中國大陸與國安_統一問題']
 	topic_list = [ x+'_0' for x in topic_list] + [x+'_1' for x in topic_list]
-	topic_list.remove('生物多樣性危機_0')
-	topic_list.remove('製造業的革命_0')
+	#topic_list.remove('生物多樣性危機_0')
+	#topic_list.remove('製造業的革命_0')
 	for topic in topic_list:
 		#try:
 		topic = unicode(topic)
@@ -457,7 +458,7 @@ def main(_):
 		with tf.Graph().as_default(), tf.Session() as session:
 				model = Word2Vec(opts, session)
 				model.restore()
-				model.export(topic)
+				model.export(u'中國大陸與國安/統一問題'+topic[-2:])
 				if FLAGS.interactive:
 					# E.g.,
 					# [0]: model.analogy('france', 'paris', 'russia')
