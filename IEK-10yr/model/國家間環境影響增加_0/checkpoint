@@ -1,0 +1,6 @@
+model_checkpoint_path: "model.ckpt-8860"
+all_model_checkpoint_paths: "model-6282"
+all_model_checkpoint_paths: "model-6830"
+all_model_checkpoint_paths: "model-8125"
+all_model_checkpoint_paths: "model-8860"
+all_model_checkpoint_paths: "model.ckpt-8860"
