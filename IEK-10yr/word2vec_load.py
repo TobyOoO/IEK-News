@@ -396,7 +396,6 @@ class Word2Vec(object):
 		for i in xrange(len(words)):
 			#print("\n%s\n=====================================" % (words[i]))
 			for (neighbor, distance) in zip(idx[i, :num], vals[i, :num]):
-				if self._id2word[neighbor]=='UNK':continue
 				result.append([self._id2word[neighbor], distance])
 				#print("%-20s %6.4f" % (self._id2word[neighbor], distance))
 		#print(result[0])

@@ -29,7 +29,7 @@ for file in os.listdir(folder):
 			for i, row in enumerate(reader):
 				if i%500==0: print('dealing %i'%i)
 				rw = row[3]
-				if rw in rw_list:
+				if rw in rw_list and rw != 'UNK':
 					result.append(row)
 
 		with open('export_coexist/'+file, 'w') as output:
