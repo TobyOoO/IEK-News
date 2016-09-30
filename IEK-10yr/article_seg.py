@@ -21,30 +21,36 @@ def read_data():
 	stop1 = u"[，。、「」（）\(\)\.【】『』：；・．～？＝＼／！＠\@＄\$％＆\&\%\-\/\\\>\<\~\:\,\[\]\?\!\=\+＋\*＊]*"
 	stop2 = "http[a-zA-Z\.\:\/\-\?\#]*"
 	stop3 = "[0-9\.]*"
-	result = []
+	
 
 	#read article
 	topic = read_distinct_fields()
 
 	for t in topic:
-		t = t[0].replace('/','_')
+		t = t[0]
+		result = []
 		print('dealing topic %s'%t)
-		for i, article in enumerate(c.execute('SELECT Title FROM News WHERE Title not null and Topic=?', (t,))):
-			if(i%1000==0):print('reading %i' % i)
-			result += ['UNK']
-			text = article[0].replace('  ', '')
-			text = re.sub(stop1, "", text)
-			text = re.sub(stop2, "_URL_", text)
-			text = re.sub(stop3, "", text)
-			seg_list = jieba.lcut(text, cut_all=False)
-			word_list = []
-			for seg in seg_list:
-				if(len(seg) == 1):
-					continue
-				word_list.append(seg)
-			result += word_list
-		with open('seg/article_seg_%s.txt'%t, 'wb') as f:
-			f.write(' '.join(result))
+		for half in range(2):
+			if half == 0:
+				query=c.execute('SELECT Title FROM News WHERE Title not null and Topic=? and Year <=2010', (t,))
+			else:
+				query=c.execute('SELECT Title FROM News WHERE Title not null and Topic=? and Year >2010', (t,))
+			for i, article in enumerate(query):
+				if(i%1000==0):print('reading %i' % i)
+				result += ['UNK']
+				text = article[0].replace('  ', '')
+				text = re.sub(stop1, "", text)
+				text = re.sub(stop2, "_URL_", text)
+				text = re.sub(stop3, "", text)
+				seg_list = jieba.lcut(text, cut_all=False)
+				word_list = []
+				for seg in seg_list:
+					if(len(seg) == 1):
+						continue
+					word_list.append(seg)
+				result += word_list
+			with open('seg/article_seg_%s_%i.txt'%(t,half), 'wb') as f:
+				f.write(' '.join(result))
 
 read_data()
 conn.close()

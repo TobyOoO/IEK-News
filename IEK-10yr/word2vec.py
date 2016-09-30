@@ -43,53 +43,24 @@ import codecs
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-flags = tf.app.flags
-flags.DEFINE_string("save_path", 'model/others', "Directory to write the model and "
-										"training summaries.")
-flags.DEFINE_string("train_data", 'article_seg_其他.txt', "Training text file. "
-										"E.g., unzipped file http://mattmahoney.net/dc/text8.zip.")
-flags.DEFINE_string(
-		"eval_data", None, "File consisting of analogies of four tokens."
-		"embedding 2 - embedding 1 + embedding 3 should be close "
-		"to embedding 4."
-		"E.g. https://word2vec.googlecode.com/svn/trunk/questions-words.txt.")
-flags.DEFINE_integer("embedding_size", 200, "The embedding dimension size.")
-flags.DEFINE_integer(
-		"epochs_to_train", 10,
-		"Number of epochs to train. Each epoch processes the training data once "
-		"completely.")
-flags.DEFINE_float("learning_rate", 0.2, "Initial learning rate.")
-flags.DEFINE_integer("num_neg_samples", 100,
-										 "Negative samples per training example.")
-flags.DEFINE_integer("batch_size", 16,
-										 "Number of training examples processed per step "
-										 "(size of a minibatch).")
-flags.DEFINE_integer("concurrent_steps", 12,
-										 "The number of concurrent training steps.")
-flags.DEFINE_integer("window_size", 5,
-										 "The number of words to predict to the left and right "
-										 "of the target word.")
-flags.DEFINE_integer("min_count", 5,
-										 "The minimum number of word occurrences for it to be "
-										 "included in the vocabulary.")
-flags.DEFINE_float("subsample", 1e-3,
-									 "Subsample threshold for word occurrence. Words that appear "
-									 "with higher frequency will be randomly down-sampled. Set "
-									 "to 0 to disable.")
-flags.DEFINE_boolean(
-		"interactive", False,
-		"If true, enters an IPython interactive session to play with the trained "
-		"model. E.g., try model.analogy('france', 'paris', 'russia') and "
-		"model.nearby(['proton', 'elephant', 'maxwell']")
-flags.DEFINE_integer("statistics_interval", 5,
-										 "Print statistics every n seconds.")
-flags.DEFINE_integer("summary_interval", 5,
-										 "Save training summary to file every n seconds (rounded "
-										 "up to statistics interval.")
-flags.DEFINE_integer("checkpoint_interval", 600,
-										 "Checkpoint the model (i.e. save the parameters) every n "
-										 "seconds (rounded up to statistics interval.")
-FLAGS = flags.FLAGS
+class FLAGS():
+	eval_data = None
+	embedding_size= 200
+	epochs_to_train= 10
+	learning_rate= 0.2
+	num_neg_samples= 100
+	batch_size= 16
+	concurrent_steps= 12
+	window_size= 5
+	min_count= 5
+	subsample= 1e-3
+	interactive= False
+	statistics_interval= 5
+	summary_interval= 5
+	checkpoint_interval= 600
+	save_path=None
+	train_data=None
+
 class Options(object):
 	"""Options used by our word2vec model."""
 	def __init__(self):
@@ -127,6 +98,8 @@ class Options(object):
 		self.checkpoint_interval = FLAGS.checkpoint_interval
 		# Where to write out summaries.
 		self.save_path = FLAGS.save_path
+		if not os.path.exists(self.save_path):
+			os.makedirs(self.save_path)
 		# Eval options.
 		# The text file for eval.
 		self.eval_data = FLAGS.eval_data
@@ -414,10 +387,32 @@ class Word2Vec(object):
 		ids = np.array([self._word2id.get(x, 0) for x in words])
 		vals, idx = self._session.run(
 				[self._nearby_val, self._nearby_idx], {self._nearby_word: ids})
+		result = []
 		for i in xrange(len(words)):
-			print("\n%s\n=====================================" % (words[i]))
+			#print("\n%s\n=====================================" % (words[i]))
 			for (neighbor, distance) in zip(idx[i, :num], vals[i, :num]):
-				print("%-20s %6.4f" % (self._id2word[neighbor], distance))
+				result.append([self._id2word[neighbor], distance])
+				#print("%-20s %6.4f" % (self._id2word[neighbor], distance))
+		return result
+	def export(self, topic):
+		import sqlite3
+		import csv
+		conn = sqlite3.connect('data/database.db')
+		c = conn.cursor()
+		c.execute('SELECT Field, Topic, Keyword From News Where Topic = ? Group By Keyword', (topic.split('_')[0],))
+		data = c.fetchall()
+		result = [['Field', 'Topic', 'Keyword', 'Related Word', 'Weight']]
+		for row in data:
+			print('Keyword %s'%row[2])
+			keyword = [str(row[2])]
+			matrix = self.nearby(keyword, 200)
+			for neighbor in matrix:
+				result.append([row[0], row[1], row[2], neighbor[0], neighbor[1]])
+
+		with open(u'export/wordlist_%s.csv'%topic, 'w') as f:
+			writer = csv.writer(f)
+			writer.writerows(result)
+		conn.close()
 def _start_shell(local_ns=None):
 	# An interactive shell is useful for debugging/development.
 	import IPython
@@ -429,23 +424,34 @@ def _start_shell(local_ns=None):
 def main(_):
 	"""Train a word2vec model."""
 	#if not FLAGS.train_data or not FLAGS.eval_data or not FLAGS.save_path:
-	if not FLAGS.train_data or not FLAGS.save_path:
+	'''if not FLAGS.train_data or not FLAGS.save_path:
 		print("--train_data --eval_data and --save_path must be specified.")
-		sys.exit(1)
-	opts = Options()
-	with tf.Graph().as_default(), tf.Session() as session:
-		model = Word2Vec(opts, session)
-		for _ in xrange(opts.epochs_to_train):
-			model.train()	# Process one epoch
-			#model.eval()	# Eval analogies.
-		# Perform a final save.
-		model.saver.save(session,
-										 os.path.join(opts.save_path, "model.ckpt"),
-										 global_step=model.global_step)
-		if FLAGS.interactive:
-			# E.g.,
-			# [0]: model.analogy('france', 'paris', 'russia')
-			# [1]: model.nearby(['proton', 'elephant', 'maxwell'])
-			_start_shell(locals())
+		sys.exit(1)'''
+	topic_list_0 = ['糧食安全','網路犯罪','能源與資源枯竭','製造業的革命','重視生活品質的生活型態','食品安全']
+	topic_list = ['不均等問題','全球化挑戰的新管理形式','國家間環境影響增加','地方永續發展','多元文化擴散','失業或就業不穩定','少子化與超高齡化社會','少子化與高齡化社會','數位經濟','智慧世界的學習與工作','氣候變遷與自然災害','災難危險','生物多樣性危機','糧食安全','網路犯罪','能源與資源枯竭','製造業的革命','重視生活品質的生活型態','食品安全']
+	topic_list = [ x+'_0' for x in topic_list_0] + [x+'_1' for x in topic_list]
+	for topic in topic_list:
+		topic = unicode(topic)
+		FLAGS.save_path='model/%s/'%topic
+		FLAGS.train_data='seg/article_seg_%s.txt'%topic
+		opts = Options()
+		with tf.Graph().as_default(), tf.Session() as session:
+			try:
+				model = Word2Vec(opts, session)
+				for _ in xrange(opts.epochs_to_train):
+					model.train()	# Process one epoch
+					#model.eval()	# Eval analogies.
+				# Perform a final save.
+				model.saver.save(session,
+												 os.path.join(opts.save_path, "model.ckpt"),
+												 global_step=model.global_step)
+				model.export(topic)
+				if FLAGS.interactive:
+					# E.g.,
+					# [0]: model.analogy('france', 'paris', 'russia')
+					# [1]: model.nearby(['proton', 'elephant', 'maxwell'])
+					_start_shell(locals())
+			except:
+				continue
 if __name__ == "__main__":
 	tf.app.run()
