@@ -9,7 +9,7 @@ import csv
 import numpy as np
 import sklearn.preprocessing
 
-filename = '20161002-IEK-偷比-word2vec-後期-matrix-R-termMatrix-M-1-長資料-m.csv'
+filename = '大於50-常態化-20161002-IEK-偷比-word2vec-後期-matrix-R-termMatrix-M-1-長資料-m.csv'
 
 header = []
 output = []
@@ -27,14 +27,14 @@ with open(filename, 'r', encoding='big5') as f:
 				scaled_weight[row[2]].append(row[3])
 			except:
 				scaled_weight[row[2]] = [row[3]]
-			output.append(row)
+			output.append(row[:4])
 
 for var, weight_list in scaled_weight.items():
 	scalar = sklearn.preprocessing.MinMaxScaler(feature_range=(1,100))
 	scalar.fit(np.array(weight_list).reshape(-1,1))
 	scaled_weight[var] = scalar.transform(np.array(weight_list).reshape(-1,1)).tolist()
 
-with open('gt0-'+filename, 'w', encoding='big5') as f:
+with open('再常態化-'+filename, 'w', encoding='big5') as f:
 	writer = csv.writer(f)
 	writer.writerow(header+['scaled_weight'])
 	j = 0
