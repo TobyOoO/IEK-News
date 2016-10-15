@@ -451,12 +451,12 @@ def main(_):
 	for topic in topic_list:
 		#try:
 		topic = unicode(topic)
-		FLAGS.save_path=glob.glob('model/%s/model.ckpt*'%topic)[0].replace('.meta', '')
 		FLAGS.train_data='seg/article_seg_%s.txt'%topic
 		with open(FLAGS.train_data, 'r') as f:
 			content = f.read().lower().split(' ')
 			print('%s, %i'% (FLAGS.train_data, len(set(content))))
 			if len(set(content)) <= 2000: continue
+		FLAGS.save_path=glob.glob('model/%s/model.ckpt*'%topic)[0].replace('.meta', '')
 		opts = Options()
 		with tf.Graph().as_default(), tf.Session() as session:
 				model = Word2Vec(opts, session)
