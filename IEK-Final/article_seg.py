@@ -32,9 +32,9 @@ def read_data():
 		print('dealing topic %s'%t)
 		for half in range(2):
 			if half == 0:
-				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Period=前期', (t,))
+				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Period=?', (t, u'前期'))
 			else:
-				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Period=後期', (t,))
+				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Period=?', (t, u'後期'))
 			for i, article in enumerate(query):
 				if(i%1000==0):print('reading %i' % i)
 				result += ['UNK']
