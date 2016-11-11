@@ -9,7 +9,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-conn = sqlite3.connect('data/database.db')
+conn = sqlite3.connect('data/bigfile/database.db')
 c = conn.cursor()
 
 def read_distinct_fields():
@@ -32,9 +32,9 @@ def read_data():
 		print('dealing topic %s'%t)
 		for half in range(2):
 			if half == 0:
-				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Year <=2010', (t,))
+				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Period=前期', (t,))
 			else:
-				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Year >2010', (t,))
+				query=c.execute(u'SELECT Title FROM News WHERE Title not null and Topic=? and Period=後期', (t,))
 			for i, article in enumerate(query):
 				if(i%1000==0):print('reading %i' % i)
 				result += ['UNK']
